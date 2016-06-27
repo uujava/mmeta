@@ -326,7 +326,7 @@ public class BaseParser {
     }
 
     public void syntaxError(String message, RuleFailure ex) {
-      throw new SyntaxError(message, ex.last, _pos, _string, _list);
+      throw new SyntaxError(message, ex.last, _string, _list, pos());
     }
 
     public void warn(String message) {

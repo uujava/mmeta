@@ -4,8 +4,23 @@ package mmeta;
 /// Thrown when a syntax error is found
 public class SyntaxError extends Error {
     private static final long serialVersionUID = 1625531475408759945L;
+
+    private final int offset;
+    private final int line;
+    private final int column;
+
     public SyntaxError(String msg, String expected, int pos, String string, Object[] list) {
         super(makeMsg(msg, expected, pos, string, list));
+        offset = pos;
+        line=0;
+        column=0;
+    }
+
+    public SyntaxError(String message, String expected, String string, Object[] list, Position pos) {
+        super(makeMsg(message, expected, pos.pos(), string, list));
+        offset = pos.pos();
+        line = pos.line();
+        column = pos.col();
     }
 
     private static String makeMsg(String msg, String expected, int pos, String string, Object[] list) {
@@ -33,6 +48,18 @@ public class SyntaxError extends Error {
             msg = msg + " before '"+ BaseParser.print_r(list[pos]) +"'";
             return ""+ msg +" (at pos: "+ pos +")";
         }
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
     }
 }
 
