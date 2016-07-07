@@ -24,6 +24,14 @@ class TestParsing < Test::Unit::TestCase
     end
   end
 
+  def assert_err_msg(text, msg)
+    begin
+      parse text
+    rescue SyntaxError => ex
+      fail("Should raise syntax error having #{msg}, but got #{ex.message}") unless ex.message.include? msg
+    end
+  end
+
   def test_eof
     assert_parse('[EOF]', '')
     assert_fails('a')
@@ -132,5 +140,9 @@ class TestParsing < Test::Unit::TestCase
 
   def test_cast
     assert_parse('[Cast]', 'cast')
+  end
+
+  def test_escape_control
+    assert_err_msg "class\r\n class A;end", "\\r"
   end
 end

@@ -38,7 +38,7 @@ public class SyntaxError extends Error {
             }
             int n = s.indexOf('\n');
             if (n > 0) s = s.substring(0, n);
-            msg = msg + " before '"+ s +"'";
+            msg = msg + " before '"+ printableControlChars(s) +"'";
 
             return ""+ msg +" (at line: "+ nl +", char: "+ (pos - nlpos) +")";
         } else {
@@ -48,6 +48,31 @@ public class SyntaxError extends Error {
             msg = msg + " before '"+ BaseParser.print_r(list[pos]) +"'";
             return ""+ msg +" (at pos: "+ pos +")";
         }
+    }
+
+    private static final String[][] CTRL_CHARS = {
+            {"\b", "\\b"},
+            {"\n", "\\n"},
+            {"\t", "\\t"},
+            {"\f", "\\f"},
+            {"\r", "\\r"}
+    };
+
+    //TODO handle unprintable unicode
+    private static String printableControlChars(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        for(int i=0; i < s.length(); i++){
+            CharSequence repl = s.subSequence(i, i + 1);
+            for (int j = 0; j < CTRL_CHARS.length; j++) {
+                String[] ctrlChar = CTRL_CHARS[j];
+                if(repl.equals(ctrlChar[0])){
+                    repl = ctrlChar[1];
+                    break;
+                }
+            }
+            sb.append(repl);
+        }
+        return sb.toString();
     }
 
     public int getOffset() {
@@ -61,6 +86,8 @@ public class SyntaxError extends Error {
     public int getColumn() {
         return column;
     }
+
+
 }
 
 
